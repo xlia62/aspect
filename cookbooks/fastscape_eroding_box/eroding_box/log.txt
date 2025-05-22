@@ -1,0 +1,126 @@
+-----------------------------------------------------------------------------
+--                             This is ASPECT                              --
+-- The Advanced Solver for Planetary Evolution, Convection, and Tectonics. --
+-----------------------------------------------------------------------------
+--     . version 3.1.0-pre (main, 54b366594)
+--     . using deal.II 9.6.2
+--     .       with 32 bit indices
+--     .       with vectorization level 1 (SSE2, 2 doubles, 128 bits)
+--     . using Trilinos 13.4.1
+--     . using p4est 2.8.0
+--     . using Geodynamic World Builder 1.0.0
+--     . running in OPTIMIZED mode
+--     . running with 8 MPI processes
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+-- For information on how to cite ASPECT, see:
+--   https://aspect.geodynamics.org/citing.html?ver=3.1.0-pre&fastscape=1&mf=1&sha=54b366594&src=code
+-----------------------------------------------------------------------------
+Number of active cells: 12,480 (on 5 levels)
+Number of degrees of freedom: 527,823 (382,203+18,219+127,401)
+
+Number of mesh deformation degrees of freedom: 54,657
+   Solving mesh displacement system... 0 iterations.
+*** Timestep 0:  t=0 years, dt=0 years
+   Solving mesh displacement system... 0 iterations.
+   Skipping temperature solve because RHS is zero.
+   Solving Stokes system (GMG)... 0+0 iterations.
+
+Number of active cells: 12,480 (on 5 levels)
+Number of degrees of freedom: 527,823 (382,203+18,219+127,401)
+
+Number of mesh deformation degrees of freedom: 54,657
+   Solving mesh displacement system... 0 iterations.
+   Added initial topography to grid
+
+*** Timestep 0:  t=0 years, dt=0 years
+   Solving mesh displacement system... 0 iterations.
+   Skipping temperature solve because RHS is zero.
+   Solving Stokes system (GMG)... 0+0 iterations.
+
+   Postprocessing:
+     Writing graphical output: eroding_box/solution/solution-00000
+
+*** Timestep 1:  t=50000 years, dt=50000 years
+   Initializing FastScape... 6 levels, cell size: 781.25 m.
+   Executing FastScape... 5 timesteps of 10000 years.
+      Writing initial VTK...
+      Writing FastScape VTK...
+   Solving mesh displacement system... 6 iterations.
+   Skipping temperature solve because RHS is zero.
+   Solving Stokes system (GMG)... 0+0 iterations.
+
+   Postprocessing:
+     Writing graphical output: eroding_box/solution/solution-00001
+
+*** Timestep 2:  t=100000 years, dt=50000 years
+   Executing FastScape... 5 timesteps of 10000 years.
+      Writing FastScape VTK...
+   Solving mesh displacement system... 6 iterations.
+   Skipping temperature solve because RHS is zero.
+   Solving Stokes system (GMG)... 0+0 iterations.
+
+   Postprocessing:
+     Writing graphical output: eroding_box/solution/solution-00002
+
+*** Timestep 3:  t=150000 years, dt=50000 years
+   Executing FastScape... 5 timesteps of 10000 years.
+      Writing FastScape VTK...
+   Solving mesh displacement system... 6 iterations.
+   Skipping temperature solve because RHS is zero.
+   Solving Stokes system (GMG)... 0+0 iterations.
+
+   Postprocessing:
+     Writing graphical output: eroding_box/solution/solution-00003
+
+*** Timestep 4:  t=200000 years, dt=50000 years
+   Executing FastScape... 5 timesteps of 10000 years.
+      Writing FastScape VTK...
+   Solving mesh displacement system... 6 iterations.
+   Skipping temperature solve because RHS is zero.
+   Solving Stokes system (GMG)... 0+0 iterations.
+
+   Postprocessing:
+     Writing graphical output: eroding_box/solution/solution-00004
+
+*** Timestep 5:  t=250000 years, dt=50000 years
+   Executing FastScape... 5 timesteps of 10000 years.
+      Writing FastScape VTK...
+   Solving mesh displacement system... 6 iterations.
+   Skipping temperature solve because RHS is zero.
+   Solving Stokes system (GMG)... 0+0 iterations.
+
+   Postprocessing:
+     Writing graphical output: eroding_box/solution/solution-00005
+
+Termination requested by criterion: end time
+
+
++---------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start    |       132s |            |
+|                                             |            |            |
+| Section                         | no. calls |  wall time | % of total |
++---------------------------------+-----------+------------+------------+
+| Assemble Stokes system rhs      |         7 |      14.2s |        11% |
+| Assemble temperature system     |         7 |      6.58s |         5% |
+| Build Stokes preconditioner     |         7 |         1s |      0.76% |
+| Execute FastScape               |         5 |      3.29s |       2.5% |
+| FastScape plugin                |         5 |      3.62s |       2.7% |
+| Initialization                  |         1 |      1.44s |       1.1% |
+| Mesh deformation                |         7 |      37.8s |        29% |
+| Mesh deformation initialize     |         2 |      3.23s |       2.4% |
+| Postprocessing                  |         6 |      2.99s |       2.3% |
+| Refine mesh structure, part 1   |         1 |     0.594s |      0.45% |
+| Refine mesh structure, part 2   |         1 |         3s |       2.3% |
+| Setup dof systems               |         2 |      13.7s |        10% |
+| Setup initial conditions        |         2 |      3.19s |       2.4% |
+| Setup matrices                  |         2 |      6.58s |         5% |
+| Solve Stokes system             |         7 |      35.8s |        27% |
++---------------------------------+-----------+------------+------------+
+
+-- Total wallclock time elapsed including restarts: 132s
+-----------------------------------------------------------------------------
+-- For information on how to cite ASPECT, see:
+--   https://aspect.geodynamics.org/citing.html?ver=3.1.0-pre&fastscape=1&mf=1&sha=54b366594&src=code
+-----------------------------------------------------------------------------

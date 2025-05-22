@@ -1,0 +1,17 @@
+# 1: Time step number
+# 2: Time (years)
+# 3: Time step size (years)
+# 4: Number of mesh cells
+# 5: Number of Stokes degrees of freedom
+# 6: Number of temperature degrees of freedom
+# 7: Iterations for temperature solver
+# 8: Iterations for Stokes solver
+# 9: Velocity iterations in Stokes preconditioner
+# 10: Schur complement iterations in Stokes preconditioner
+# 11: Visualization file name
+0 0.000000000000e+00 0.000000000000e+00 12480 400422 127401 0 0 0 0 eroding_box/solution/solution-00000 
+1 5.000000000000e+04 5.000000000000e+04 12480 400422 127401 0 0 0 0 eroding_box/solution/solution-00001 
+2 1.000000000000e+05 5.000000000000e+04 12480 400422 127401 0 0 0 0 eroding_box/solution/solution-00002 
+3 1.500000000000e+05 5.000000000000e+04 12480 400422 127401 0 0 0 0 eroding_box/solution/solution-00003 
+4 2.000000000000e+05 5.000000000000e+04 12480 400422 127401 0 0 0 0 eroding_box/solution/solution-00004 
+5 2.500000000000e+05 5.000000000000e+04 12480 400422 127401 0 0 0 0 eroding_box/solution/solution-00005 
