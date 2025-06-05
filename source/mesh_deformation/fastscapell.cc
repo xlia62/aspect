@@ -40,6 +40,10 @@ namespace aspect
      * see https://fastscape.org/fastscapelib-fortran/ for a list of all functions and
      * their input parameters. These functions must be defined at the top here before
      * they are used.
+     * Tells the C++ compiler to treat the enclosed function declarations as C-style functions.
+     * Fortran compilers usually export function names in lowercase with a trailing underscore,
+     * like fastscape_init_, so extern "C" ensures the C++ linker finds them correctly.
+     * This is necessary when calling Fortran functions from C or C++.
      */
     extern"C"
     {
@@ -50,6 +54,8 @@ namespace aspect
 
       /**
        * Set the x and y extent of the FastScape model.
+       * "*"" in C++ (and C) is used to declare a pointer,
+       *  a variable that stores the memory address of another variable.
        */
       void fastscape_set_xl_yl_(const double *xxl,
                                 const double *yyl);
@@ -191,7 +197,7 @@ namespace aspect
     void
     FastScapeLL<dim>::initialize ()
     {
-      CitationInfo::add("fastscape");
+      CitationInfo::add("fastscapell");
 
       AssertThrow(Plugins::plugin_type_matches<const GeometryModel::Box<dim>>(this->get_geometry_model()),
                   ExcMessage("FastScape can only be run with a box geometry model."));
@@ -1964,7 +1970,7 @@ namespace aspect
   namespace MeshDeformation
   {
     ASPECT_REGISTER_MESH_DEFORMATION_MODEL(FastScapeLL,
-                                           "fastscape test for 2025 hackathon",
+                                           "fastscapell",
                                            "A plugin that uses the program FastScape to compute the deformation of the mesh surface. "
                                            "FastScape is a surface processes code that computes the erosion, transport and "
                                            "deposition of sediments both on land and in the marine domain. These surface processes "

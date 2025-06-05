@@ -18,6 +18,14 @@
   <http://www.gnu.org/licenses/>.
  */
 
+/*
+include guards:They prevent the file from being included (i.e., compiled)
+ more than once in the same translation unit. This is important because including 
+ the same header multiple times without guards would cause redefinition errors during compilation.
+ #ifndef stands for "if not defined"
+ _aspect_mesh_deformation_fastscapell_h is a macro name, usually unique to the file
+ */ 
+
 #ifndef _aspect_mesh_deformation_fastscapell_h
 #define _aspect_mesh_deformation_fastscapell_h
 
@@ -39,18 +47,21 @@ namespace aspect
      *
      * @ingroup MeshDeformation
      */
-    template <int dim>
-    class FastScapeLL : public Interface<dim>, public SimulatorAccess<dim>
+    template <int dim> //template class, meaning it works for multiple dimensions (2D or 3D).
+    class FastScapeLL : public Interface<dim>, public SimulatorAccess<dim> //This class inherits from these k,m jtwo base classes
     {
       public:
         /**
          * Initialize variables for FastScape.
          */
+        //This function is called once at the beginning of the simulation to initialize plugin
+        //Override: It overrides the virtual function from the Interface<dim> base class.
         virtual void initialize () override;
 
         /**
          * Destructor for FastScape.
          */
+        //Called when the object is destroyed—typically at the end of a simulation.
         ~FastScapeLL() override;
 
         /**
@@ -59,8 +70,15 @@ namespace aspect
          * The calling class will respect
          * these constraints when computing the new vertex positions.
          */
-        virtual
-        void
+        virtual //tells C++ that this method can be overridden in a subclass.
+        void //function returns nothing
+        /*
+        std: standard library, std::set use the set type deinfed in teh C++ standard library
+        &: pass by reference, If the function changes x, it changes the original value outside the function.
+        const: this function will not change this object
+        <>:  type of data a class 
+        set: multiple unique values of boundary id
+        */
         compute_velocity_constraints_on_boundary(const DoFHandler<dim> &mesh_deformation_dof_handler,
                                                  AffineConstraints<double> &mesh_velocity_constraints,
                                                  const std::set<types::boundary_id> &boundary_id) const override;
