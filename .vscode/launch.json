@@ -10,11 +10,11 @@
         	"request": "launch",
             "stopAtEntry": false,
         	"program": "/Users/admin-tylxue/Documents/software/aspect/build/./aspect-debug",
-        	"args": ["/Users/admin-tylxue/Documents/software/aspect/tests/2025_hackathon/2d_rift_fs3_fun.prm"],
+        	"args": ["/Users/admin-tylxue/Documents/research/code/aspect_prm/2025_hackathon/2d_rift_fs4_fun.prm"],
         	"environment": [{ "name": "config", "value": "Debug" }],
             "externalConsole": false,
             "MIMode": "lldb",
-        	"cwd": "/Users/admin-tylxue/Documents/software/aspect/tests/"
+        	"cwd": "/Users/admin-tylxue/Documents/research/code/aspect_prm/2025_hackathon/"
       	}
 	]
 }
