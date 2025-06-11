@@ -498,7 +498,9 @@ namespace aspect
          * the sea level means the sea level lies below the initial unperturbed
          * top boundary of the domain.
          */
-        double sea_level;
+        mutable double sea_level;
+        // function of sea level 
+        Functions::ParsedFunction<1> sea_level_function;
 
         /**
          * Parameters to set an extra erosional base level

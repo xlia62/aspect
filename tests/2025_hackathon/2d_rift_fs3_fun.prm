@@ -9,7 +9,7 @@ set Nonlinear solver tolerance             = 1e-3 # Stricter tolerances should b
 set Max nonlinear iterations               = 10 # Normally this should be set to a higher number
 set CFL number                             = 0.2
 set Maximum time step                      = 20e3
-set Output directory                       = output-2d_rift_fs5
+set Output directory                       = output-2d_rift_fs3_fun
 set Pressure normalization                 = no
 
 subsection Solver parameters
@@ -35,10 +35,10 @@ end
 subsection Geometry model
   set Model name = box
   subsection Box
-    set X repetitions = 6
-    set Y repetitions = 1
-    set X extent      = 60e3
-    set Y extent      = 10e3
+    set X repetitions = 10
+    set Y repetitions = 2
+    set X extent      = 100e3
+    set Y extent      = 20e3
   end
 end
 
@@ -48,14 +48,14 @@ end
 # undergoing brittle deformation are in the high-resolution
 # region.
 subsection Mesh refinement
-  set Initial adaptive refinement        = 2
-  set Initial global refinement          = 4
+  set Initial adaptive refinement        = 1
+  set Initial global refinement          = 3
   set Time steps between mesh refinement = 0
   set Strategy = minimum refinement function
   subsection Minimum refinement function
     set Coordinate system   = cartesian
     set Variable names      = x,y
-    set Function expression = if ( y>=7e3, 6, if(y>=4e3, 5, 3))
+    set Function expression = if ( y>=15e3 && x>=25e3 && x<=75e3, 4, if(y>=10e3, 3, 2))
   end
 end
 
@@ -70,7 +70,7 @@ subsection Mesh deformation
     set Additional fastscape refinement = 1
     set Average out of plane surface topography in 2d = true
     set Fastscape seed = 1000
-    set Maximum surface refinement level = 4
+    set Maximum surface refinement level = 3
     set Surface refinement difference = 0
     set Use marine component = true
     # FastScape Y extent when using a 2D ASPECT model
@@ -97,9 +97,9 @@ subsection Mesh deformation
      # Deposition coefficient for sediment, -1 sets this to teh same as the bedrock deposition coefficient
      set Sediment deposition coefficient = 1
      # River incision rate for bedrock in the Stream Power Law
-     set Bedrock river incision rate = 2e-6
+     set Bedrock river incision rate = 1e-6
      # River incision rate for sediment in the Stream Power Law. -1 sets this to the bedrock river incision rate
-     set Sediment river incision rate = 2e-6
+     set Sediment river incision rate = 1e-6
      # Transport coefficient (diffusivity) for bedrock
      set Bedrock diffusivity = -1
      # Transport coefficient (diffusivity) for sediment. -1 sets this to the bedrock diffusivity
@@ -111,7 +111,11 @@ subsection Mesh deformation
    subsection Marine parameters
    # Fastscape sea level (m), set relative to the ASPECT surface where
    # a sea level of zero will represent the maximum Y (2D) or Z (3D) extent inside ASPECT.
-     set Sea level = -1000 #-2000
+     #set Sea level = -1000 #-2000
+     subsection Sea level
+        set Variable names = t
+        set Function expression = -1e-3 * t
+     end 
      # sand_surface_porosity
      set Sand porosity = 0
      # Porosity of silt
@@ -125,8 +129,8 @@ subsection Mesh deformation
      # Depth averaging for the sand-silt equation
      set Depth averaging thickness = 1e2
      # Transport coefficient (diffusivity) for sand
-     set Sand transport coefficient = 10
-     set Silt transport coefficient = 10
+     set Sand transport coefficient = 50
+     set Silt transport coefficient = 50
    end
  end
 end  
@@ -141,7 +145,7 @@ subsection Boundary velocity model
 
   subsection Function
     set Variable names      = x,y
-    set Function constants  = v=0.002, w=60.e3, d=10.e3
+    set Function constants  = v=0.002, w=100.e3, d=20.e3
     set Function expression = if (x < w/2 , -v, v) ; v*2*d/w
   end
 end
@@ -175,10 +179,10 @@ subsection Initial composition model
 
   subsection Function
     set Variable names      = x,y
-    set Function constants  = factor=1.,depth=10.e3,ymax=10.e3,tandip=1.732,xf=20.e3,fthick=2.e3, fte = 3
+    set Function constants  = factor=1.,depth=20.e3,ymax=20.e3,tandip=1.732,xf=30.e3,fthick=2.5e3, fte = 3
     set Function expression = if((-tandip*(x-fthick)+ymax+xf*tandip>y) && (-tandip*x+ymax+xf*tandip<y) && y>ymax-depth, fte, \
-                              if(x>20.e3 && x<40.e3 && y>ymax-depth, 0.5*factor*(0.2 + rand()), 0)); \
-                              0; 1; 0; 0; 0;
+                              if(x>25.e3 && x<75.e3 && y>ymax-depth, 0.5*factor*(0.2 + rand()), 0)); \
+                              0; 0; 0; 0; 0;
   end
 end
 
@@ -190,13 +194,13 @@ subsection Boundary composition model
   subsection Function
     set Coordinate system   = cartesian
     set Variable names      = x,y,t
-    set Function constants  = DZ = 10e3, SeaLevel = -1000  #  Attention: 2D setup only. Make sure to update these parameters according to box size and fastscape parameters. 
+    set Function constants  = DZ = 20e3, SeaLevel = -1000  #  Attention: 2D setup only. Make sure to update these parameters according to box size and fastscape parameters. 
     set Function expression = 0; \
                               0; \
                               0; \
-                              if(y>7e3, t/1e6, 0); \
-                              if(y>7e3, DZ - SeaLevel -y, 0); \
-                              if(y>7e3, 1, 0)
+                              if(y>15e3, t/1e6, 0); \
+                              if(y>15e3, DZ - SeaLevel -y, 0); \
+                              if(y>15e3, 1, 0)
   end
 end
 
