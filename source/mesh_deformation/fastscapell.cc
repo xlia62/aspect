@@ -435,8 +435,15 @@ namespace aspect
           // In later timesteps, we copy h directly from FastScape.
           std::mt19937 random_number_generator(fastscape_seed);
           std::uniform_real_distribution<double> random_distribution(-noise_elevation,noise_elevation);
-          // sea_level = sea_level_function.value(time_in_years);
-          sea_level = sea_level_function.value(Point<1>(time_in_years));  
+          // read sea level from the user defined function;
+          //double sea_level;
+          //double sea_level;
+          if (sea_level_is_function)
+            sea_level = sea_level_function.value(Point<1>(time_in_years));
+          else
+            sea_level = sea_level_constant_value;
+
+          // sea_level = sea_level_function.value(Point<1>(time_in_years));  
           for (unsigned int i=0; i<fastscape_array_size; ++i)
             {
               elevation_old[i] = elevation[i];
@@ -1782,13 +1789,22 @@ namespace aspect
 
           prm.enter_subsection ("Marine parameters");
           //{ sea_level_function.parse_parameters(prm, "Sea level");
-          { //sea_level_function.declare_parameters(prm, 1);
-            prm.enter_subsection ("Sea level");
+          { 
+            prm.declare_entry("Sea level", "function",
+                              Patterns::Anything(),
+                             "input sea level value or sea level function.");
+            //declare subsection if user choose function 
+            prm.enter_subsection("Sea level function");
             {
-            //"Sea level relative to the ASPECT surface, where the maximum Z or Y extent in ASPECT is a sea level of zero. Units: $\\{m}$ ");
-            Functions::ParsedFunction<1>::declare_parameters(prm, 1);
+              Functions::ParsedFunction<1>::declare_parameters(prm, 1);
             }
             prm.leave_subsection();
+            // prm.enter_subsection ("Sea level");
+            // {
+            // //"Sea level relative to the ASPECT surface, where the maximum Z or Y extent in ASPECT is a sea level of zero. Units: $\\{m}$ ");
+            // Functions::ParsedFunction<1>::declare_parameters(prm, 1);
+            // }
+            // prm.leave_subsection();
             // prm.declare_entry("Sea level", "0",
             //                  Patterns::Double(),
             
@@ -1945,12 +1961,34 @@ namespace aspect
 
           prm.enter_subsection("Marine parameters");
           {
-            prm.enter_subsection("Sea level");
-            {// sea_level = prm.get_double("Sea level");
-              sea_level_function.parse_parameters(prm);
-              //sea_level = sea_level_function.value(Point<1>(0));
+            const std::string sea_level_input= prm.get("Sea level");
+            if (sea_level_input == "function")
+            {
+              sea_level_is_function = true;
+              prm.enter_subsection("Sea level function");
+              {
+                sea_level_function.parse_parameters(prm);
+              }
+              prm.leave_subsection();
             }
-            prm.leave_subsection();
+            else
+            {
+              sea_level_is_function= false;
+              try
+              {
+                sea_level_constant_value = std::stod(sea_level_input);
+              }
+              catch(const std::invalid_argument&)
+              {
+                AssertThrow(false, ExcMessage("Invalid 'Sea level' value"));
+              }
+            }
+            // prm.enter_subsection("Sea level");
+            // {// sea_level = prm.get_double("Sea level");
+            //   sea_level_function.parse_parameters(prm);
+            //   //sea_level = sea_level_function.value(Point<1>(0));
+            // }
+            // prm.leave_subsection();
             sand_surface_porosity = prm.get_double("Sand porosity");
             silt_surface_porosity = prm.get_double("Silt porosity");
             sand_efold_depth = prm.get_double("Sand e-folding depth");
