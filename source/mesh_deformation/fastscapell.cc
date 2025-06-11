@@ -1788,15 +1788,18 @@ namespace aspect
           prm.leave_subsection();
 
           prm.enter_subsection ("Marine parameters");
-          //{ sea_level_function.parse_parameters(prm, "Sea level");
+          
           { 
-            prm.declare_entry("Sea level", "function",
-                              Patterns::Anything(),
-                             "input sea level value or sea level function.");
-            //declare subsection if user choose function 
-            prm.enter_subsection("Sea level function");
+            prm.declare_entry("Sea level format", "constant",
+                              Patterns::Selection("constant|function"),
+                             "Specify how sea level is defined: 'constant' or 'function'.");
+            //declare subsection for sea level 
+            prm.enter_subsection("Sea level");
             {
-              Functions::ParsedFunction<1>::declare_parameters(prm, 1);
+              prm.declare_entry ("Sea level value", "0.0",
+                           Patterns::Double(),
+                           "Constant sea level value in meters.");
+              Functions::ParsedFunction<1>::declare_parameters(prm, 1); //if format is function
             }
             prm.leave_subsection();
             // prm.enter_subsection ("Sea level");
@@ -1961,27 +1964,24 @@ namespace aspect
 
           prm.enter_subsection("Marine parameters");
           {
-            const std::string sea_level_input= prm.get("Sea level");
-            if (sea_level_input == "function")
+            const std::string format = prm.get("Sea level format");
+            prm.enter_subsection ("Sea level");
             {
+             if (format == "constant")
+             {
+              sea_level_is_function = false;
+              sea_level_constant_value = prm.get_double("Sea level value");
+             }
+             else if (format == "function")
+             {
               sea_level_is_function = true;
-              prm.enter_subsection("Sea level function");
-              {
-                sea_level_function.parse_parameters(prm);
-              }
-              prm.leave_subsection();
-            }
-            else
-            {
-              sea_level_is_function= false;
-              try
-              {
-                sea_level_constant_value = std::stod(sea_level_input);
-              }
-              catch(const std::invalid_argument&)
-              {
-                AssertThrow(false, ExcMessage("Invalid 'Sea level' value"));
-              }
+              sea_level_function.parse_parameters(prm);
+             }
+             else
+             {
+              AssertThrow(false, ExcMessage("Invalid 'Sea level format."));
+             }
+             prm.leave_subsection();
             }
             // prm.enter_subsection("Sea level");
             // {// sea_level = prm.get_double("Sea level");
