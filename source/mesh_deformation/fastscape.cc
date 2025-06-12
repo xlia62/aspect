@@ -1760,7 +1760,7 @@ namespace aspect
           prm.enter_subsection ("Marine parameters");
           { 
             // Define sea level as a constant value of time dependent user-defined function
-            prm.declare_entry("Sea level format", "constant",
+            prm.declare_entry("Sea level definition", "constant",
                               Patterns::Selection("constant|function"),
                              "Specify how sea level is defined: 'constant' or 'function'.");
             //declare subsection for sea level 
