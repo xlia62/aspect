@@ -478,7 +478,7 @@ namespace aspect
          * a sea level of zero will represent the initial maximum unperturbed
          * Y (2D) or Z (3D) extent of the ASPECT domain. A negative value of
          * the sea level means the sea level lies below the initial unperturbed
-         * top boundary of the domain. The sea level curve can be either constant
+         * top boundary of the domain. The sea level value can be either constant
          * value or a function of time based on the format setup.
          */
         mutable double sea_level_constant_value =0.0; 
