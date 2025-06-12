@@ -508,7 +508,7 @@ namespace aspect
                                               &bedrock_deposition_g,
                                               &sediment_deposition_g,
                                               &slope_exponent_p);
-        // time to add some sediments                                       
+        // Add sediments through marine sedimentation                                   
         if (use_marine_component)
             fastscape_set_marine_parameters_(&sea_level,
                                          &sand_surface_porosity,
