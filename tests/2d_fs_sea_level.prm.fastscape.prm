@@ -9,7 +9,7 @@ set Nonlinear solver tolerance             = 1e-3 # Stricter tolerances should b
 set Max nonlinear iterations               = 10 # Normally this should be set to a higher number
 set CFL number                             = 0.2
 set Maximum time step                      = 20e3
-set Output directory                       = output-2d_sea_level_fs
+set Output directory                       = output-2d_fs_sea_level
 set Pressure normalization                 = no
 
 subsection Solver parameters
@@ -111,9 +111,9 @@ subsection Mesh deformation
    subsection Marine parameters
    # Fastscape sea level (m), set relative to the ASPECT surface where
    # a sea level of zero will represent the maximum Y (2D) or Z (3D) extent inside ASPECT.
-     #set Sea level = -2000
-     set Sea level format = function
-     subsection Sea level 
+     set Sea level = -2000
+     set Use sea level function = true
+     subsection Sea level function
        set Variable names = t
        set Function expression = -1e-3*t
      end 

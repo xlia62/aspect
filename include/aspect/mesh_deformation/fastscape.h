@@ -482,9 +482,9 @@ namespace aspect
          * or time dependent user-defined function. 
          */
         mutable double sea_level_constant_value =0.0; 
-        mutable double sea_level;                  
+        mutable double sea_level = 0.0;                  
         Functions::ParsedFunction<1> sea_level_function;           
-        bool sea_level_is_function = false;    
+        bool use_sea_level_function = false;    
 
         /**
          * Parameters to set an extra erosional base level

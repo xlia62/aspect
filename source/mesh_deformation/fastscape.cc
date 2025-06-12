@@ -430,7 +430,7 @@ namespace aspect
           std::mt19937 random_number_generator(fastscape_seed);
           std::uniform_real_distribution<double> random_distribution(-noise_elevation,noise_elevation);
           // read sea level from the user defined function or constant value;
-          if (sea_level_is_function)
+          if (use_sea_level_function)
             sea_level = sea_level_function.value(Point<1>(time_in_years));
           else
             sea_level = sea_level_constant_value;
@@ -1760,18 +1760,20 @@ namespace aspect
           prm.enter_subsection ("Marine parameters");
           { 
             // Define sea level as a constant value of time dependent user-defined function
-            prm.declare_entry("Sea level definition", "constant",
-                              Patterns::Selection("constant|function"),
-                             "Specify how sea level is defined: 'constant' or 'function'.");
-            //declare subsection for sea level 
-            prm.enter_subsection("Sea level");
+            prm.declare_entry("Use sea level function", "false",
+                  Patterns::Bool(),
+                  "Whether to define sea level using a time-dependent function. "
+                  "If false, a constant value will be used.");
+
+            prm.declare_entry("Sea level", "0.0",
+                  Patterns::Double(),
+                  "Sea level value in meters.");
+            prm.enter_subsection ("Sea level function");
             {
-              prm.declare_entry ("Sea level value", "0.0",
-                           Patterns::Double(),
-                           "Constant sea level value in meters.");
-              Functions::ParsedFunction<1>::declare_parameters(prm, 1); //if format is function
+              Functions::ParsedFunction<1>::declare_parameters(prm, 1);
             }
             prm.leave_subsection();
+
             prm.declare_entry("Sand porosity", "0.0",
                               Patterns::Double(),
                               "Porosity of sand. ");
@@ -1925,24 +1927,18 @@ namespace aspect
 
           prm.enter_subsection("Marine parameters");
           {
-            const std::string format = prm.get("Sea level format");
-            prm.enter_subsection ("Sea level");
+            use_sea_level_function = prm.get_bool("Use sea level function");
+            if (use_sea_level_function)
             {
-             if (format == "constant")
-             {
-              sea_level_is_function = false;
-              sea_level_constant_value = prm.get_double("Sea level value");
-             }
-             else if (format == "function")
-             {
-              sea_level_is_function = true;
-              sea_level_function.parse_parameters(prm);
-             }
-             else
-             {
-              AssertThrow(false, ExcMessage("Invalid 'Sea level format."));
-             }
-             prm.leave_subsection();
+              prm.enter_subsection("Sea level function");
+              {
+                sea_level_function.parse_parameters(prm);
+              }
+              prm.leave_subsection();
+            } 
+            else
+            {
+              sea_level_constant_value = prm.get_double("Sea level");
             }
             sand_surface_porosity = prm.get_double("Sand porosity");
             silt_surface_porosity = prm.get_double("Silt porosity");
