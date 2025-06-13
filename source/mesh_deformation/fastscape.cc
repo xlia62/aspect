@@ -371,6 +371,7 @@ namespace aspect
           std::vector<double> silt_fraction(fastscape_array_size);
           std::vector<double> elevation_old(fastscape_array_size);
 
+
           fill_fastscape_arrays(elevation,
                                 bedrock_transport_coefficient_array,
                                 bedrock_river_incision_rate_array,
@@ -771,21 +772,42 @@ namespace aspect
       // and surface_refinement_difference
       bool fastscape_mesh_filled = true;
       const unsigned int fastscape_array_size = fastscape_nx*fastscape_ny;
-      for (unsigned int i=0; i<fastscape_array_size; ++i)
-        {
-          bedrock_river_incision_rate_array[i] = bedrock_river_incision_rate;
-          bedrock_transport_coefficient_array[i] = bedrock_transport_coefficient;
 
-          // If this is a boundary node that is a ghost node then ignore that it
-          // has not filled yet as the ghost nodes haven't been set.
-          if (elevation[i] == std::numeric_limits<double>::max() && !is_ghost_node(i,false))
-            fastscape_mesh_filled = false;
-        }
+      for (unsigned int i = 0; i < fastscape_array_size; ++i)
+      {
+        // --- NEW: compute kf either from function or constant ---
+        if (use_kf_distribution_function)
+          {
+            // map flat index -> (ix, iy)
+            const unsigned int ix = i % fastscape_nx;
+            const unsigned int iy = i / fastscape_nx;
 
-      Utilities::MPI::broadcast(this->get_mpi_communicator(), fastscape_mesh_filled, 0);
-      AssertThrow (fastscape_mesh_filled == true,
-                   ExcMessage("The FastScape mesh is missing data. A likely cause for this is that the "
-                              "maximum surface refinement or surface refinement difference are improperly set."));
+            // physical coords of cell center (or node) in Cartesian 2D
+            const double x = grid_extent[0].first + (ix - use_ghost_nodes) * fastscape_dx;
+            const double y = grid_extent[1].first + (iy - use_ghost_nodes) * fastscape_dy;
+
+            bedrock_river_incision_rate_array[i]
+              = kf_distribution_function.value(Point<2>(x, y));
+          }
+        else
+          {
+            bedrock_river_incision_rate_array[i]
+              = constant_bedrock_river_incision_rate;
+          }
+        // ---------------------------------------------------------
+
+        bedrock_transport_coefficient_array[i] = bedrock_transport_coefficient;
+
+        // sanity check on elevation fill
+        if (elevation[i] == std::numeric_limits<double>::max() 
+            && !is_ghost_node(i, false))
+          fastscape_mesh_filled = false;
+      }
+
+      Utilities::MPI::broadcast(this->get_mpi_communicator(),
+                                fastscape_mesh_filled, 0);
+      AssertThrow(fastscape_mesh_filled,
+                  ExcMessage("… FastScape mesh is missing data …"));
     }
 
 
@@ -1700,9 +1722,22 @@ namespace aspect
             prm.declare_entry("Sediment deposition coefficient", "-1",
                               Patterns::Double(),
                               "Deposition coefficient for sediment, -1 sets this to the same as the bedrock deposition coefficient.");
+            // Define Bedrock river incision rate as a constant value of time dependent user-defined function
+            prm.declare_entry("Use kf distribution function", "false",
+                  Patterns::Bool(),
+                  "Whether to define Bedrock river incision rate using a distribution function. "
+                  "If false, a constant kf value will be used.");
             prm.declare_entry("Bedrock river incision rate", "1e-5",
-                              Patterns::Double(),
-                              "River incision rate for bedrock in the Stream Power Law. Units: $\\{m^(1-2*drainage_area_exponent)/yr}$");
+                  Patterns::Double(),
+                  "River incision rate for bedrock in the Stream Power Law. Units: $\\{m^(1-2*drainage_area_exponent)/yr}$");
+            prm.enter_subsection ("kf distribution function");
+            {
+              Functions::ParsedFunction<2>::declare_parameters(prm, 2);
+            }
+            prm.leave_subsection();
+            // prm.declare_entry("Bedrock river incision rate", "1e-5",
+            //                   Patterns::Double(),
+            //                   "River incision rate for bedrock in the Stream Power Law. Units: $\\{m^(1-2*drainage_area_exponent)/yr}$");
             prm.declare_entry("Sediment river incision rate", "-1",
                               Patterns::Double(),
                               "River incision rate for sediment in the Stream Power Law. -1 sets this to the bedrock river incision rate. Units: $\\{m^(1-2*drainage_area_exponent)/yr}$ ");
@@ -1882,7 +1917,20 @@ namespace aspect
             drainage_area_exponent_m = prm.get_double("Drainage area exponent");
             slope_exponent_n = prm.get_double("Slope exponent");
             sediment_river_incision_rate = prm.get_double("Sediment river incision rate");
-            bedrock_river_incision_rate = prm.get_double("Bedrock river incision rate");
+            //bedrock_river_incision_rate = prm.get_double("Bedrock river incision rate");
+            use_kf_distribution_function = prm.get_bool("Use kf distribution function");
+            if (use_kf_distribution_function)
+            {
+              prm.enter_subsection("kf distribution function");
+              {
+                kf_distribution_function.parse_parameters(prm);
+              }
+              prm.leave_subsection();
+            } 
+            else
+            {
+              constant_bedrock_river_incision_rate = prm.get_double("Bedrock river incision rate");
+            }
             sediment_transport_coefficient = prm.get_double("Sediment diffusivity");
             bedrock_transport_coefficient = prm.get_double("Bedrock diffusivity");
             bedrock_deposition_g = prm.get_double("Bedrock deposition coefficient");

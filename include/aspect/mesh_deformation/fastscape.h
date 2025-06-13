@@ -444,7 +444,13 @@ namespace aspect
          * Bedrock river incision rate for the stream power law.
          * (meters^(1-2m)/yr, $kf$ variable in FastScape surface equation.)
          */
-        double bedrock_river_incision_rate;
+        mutable double bedrock_river_incision_rate;
+        // Declare a parsed function for spatially variable kf
+        Functions::ParsedFunction<2> kf_distribution_function;
+        // Flag for using parsed function vs constant
+        bool use_kf_distribution_function;
+        // The constant fallback value
+        double constant_bedrock_river_incision_rate;
 
         /**
          * Sediment river incision rate for the stream power law (meters^(1-2m)/yr).
