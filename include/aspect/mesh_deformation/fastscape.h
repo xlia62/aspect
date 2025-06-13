@@ -481,7 +481,7 @@ namespace aspect
          * top boundary of the domain. The sea level value can be either constant
          * or a time dependent user-defined function. 
          */
-        mutable double sea_level_constant_value =0.0; 
+        mutable double sea_level_constant_value = 0.0; 
         mutable double sea_level = 0.0;                  
         Functions::ParsedFunction<1> sea_level_function;           
         bool use_sea_level_function = false;    
