@@ -479,7 +479,7 @@ namespace aspect
          * Y (2D) or Z (3D) extent of the ASPECT domain. A negative value of
          * the sea level means the sea level lies below the initial unperturbed
          * top boundary of the domain. The sea level value can be either constant
-         * or time dependent user-defined function. 
+         * or a time dependent user-defined function. 
          */
         mutable double sea_level_constant_value =0.0; 
         mutable double sea_level = 0.0;                  
