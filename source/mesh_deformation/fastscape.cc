@@ -524,7 +524,7 @@ namespace aspect
 
           // Find timestep size, run FastScape, and make visualizations.
           execute_fastscape(elevation,
-                            bedrock_transport_coefficient_array,
+                            bedrock_river_incision_rate_array, // this is HHHHH
                             velocity_x,
                             velocity_y,
                             velocity_z,
