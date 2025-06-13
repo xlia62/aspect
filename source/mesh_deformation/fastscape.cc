@@ -1767,7 +1767,8 @@ namespace aspect
 
             prm.declare_entry("Sea level", "0.0",
                   Patterns::Double(),
-                  "Sea level value in meters.");
+                  "Constant sea level relative to the ASPECT surface, where the maximum Z or Y extent in ASPECT is a sea level of zero. Units: $\\{m}$ ");
+
             prm.enter_subsection ("Sea level function");
             {
               Functions::ParsedFunction<1>::declare_parameters(prm, 1);
