@@ -566,7 +566,7 @@ namespace aspect
           // This is called solely so we can set the timer and will return immediately.
           execute_fastscape(mesh_velocity_z,
                             mesh_velocity_z,
-                            mesh_velocity_z,
+                            mesh_velocity_z, 
                             mesh_velocity_z,
                             mesh_velocity_z,
                             aspect_timestep_in_years,
@@ -772,7 +772,8 @@ namespace aspect
       // and surface_refinement_difference
       bool fastscape_mesh_filled = true;
       const unsigned int fastscape_array_size = fastscape_nx*fastscape_ny;
-
+    
+      kf_distribution_function.set_time(this->get_time() / year_in_seconds); 
       for (unsigned int i = 0; i < fastscape_array_size; ++i)
       {
         // --- NEW: compute kf either from function or constant ---

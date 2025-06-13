@@ -446,7 +446,7 @@ namespace aspect
          */
         mutable double bedrock_river_incision_rate;
         // Declare a parsed function for spatially variable kf
-        Functions::ParsedFunction<2> kf_distribution_function;
+        mutable Functions::ParsedFunction<2> kf_distribution_function;
         // Flag for using parsed function vs constant
         bool use_kf_distribution_function;
         // The constant fallback value
