@@ -443,13 +443,23 @@ namespace aspect
         /**
          * Bedrock river incision rate for the stream power law.
          * (meters^(1-2m)/yr, $kf$ variable in FastScape surface equation.)
+         * User can specify Kf as a constant value or 2D function 
          */
         mutable double bedrock_river_incision_rate;
-        // Declare a parsed function for spatially variable kf
+
+        /**
+         * Declare a parsed function for spatially variable kf 
+         */
         mutable Functions::ParsedFunction<2> kf_distribution_function;
-        // Flag for using parsed function vs constant
+
+        /**
+         * Flag for using parsed function vs constant
+         */
         bool use_kf_distribution_function;
-        // The constant fallback value
+
+        /**
+         * The constant fallback value
+         */
         double constant_bedrock_river_incision_rate;
 
         /**
@@ -460,9 +470,26 @@ namespace aspect
         double sediment_river_incision_rate;
 
         /**
-         * Bedrock transport coefficient for hillslope diffusion (m^2/yr, kd in FastScape surface equation.)
+         * Bedrock transport coefficient for hillslope diffusion 
+         * (m^2/yr, kd in FastScape surface equation).
+         * User can specify Kf as a constant value or 2D function 
          */
-        double bedrock_transport_coefficient;
+        mutable double bedrock_transport_coefficient;
+
+        /**
+         * Declare a parsed function for spatially variable kd 
+         */
+        mutable Functions::ParsedFunction<2> kd_distribution_function;
+
+        /**
+         * Flag for using parsed function vs constant
+         */
+        bool use_kd_distribution_function;
+
+        /**
+         * The constant bedrock transport coefficient value
+         */
+        double constant_bedrock_transport_coefficient;
 
         /**
          * Sediment transport coefficient for hillslope diffusion (m^2/yr). When set to -1 this is
