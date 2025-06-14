@@ -456,7 +456,7 @@ namespace aspect
         /**
          * Bedrock transport coefficient for hillslope diffusion (m^2/yr, kd in FastScape surface equation.)
          */
-        double bedrock_transport_coefficient;
+        mutable double bedrock_transport_coefficient;
 
         /**
          * Declare a parsed function for spatially variable kd 
@@ -467,6 +467,11 @@ namespace aspect
          * Flag for using parsed function vs constant
          */
         bool use_kd_distribution_function;
+
+        /**
+         * The constant bedrock transport coefficient value
+         */
+        double constant_bedrock_transport_coefficient;
 
         /**
          * Sediment transport coefficient for hillslope diffusion (m^2/yr). When set to -1 this is

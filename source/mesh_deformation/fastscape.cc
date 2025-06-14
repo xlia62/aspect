@@ -798,7 +798,7 @@ namespace aspect
           else
             {
               bedrock_transport_coefficient_array[i]
-                = bedrock_transport_coefficient;
+                = constant_bedrock_transport_coefficient;
             }
 
           // If this is a boundary node that is a ghost node then ignore that it
@@ -1940,7 +1940,8 @@ namespace aspect
             } 
             else
             {
-              bedrock_transport_coefficient = prm.get_double("Bedrock diffusivity");
+              constant_bedrock_transport_coefficient = prm.get_double("Bedrock diffusivity");
+              bedrock_transport_coefficient = constant_bedrock_transport_coefficient;
             }
             bedrock_deposition_g = prm.get_double("Bedrock deposition coefficient");
             sediment_deposition_g = prm.get_double("Sediment deposition coefficient");
