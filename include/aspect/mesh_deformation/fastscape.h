@@ -96,6 +96,7 @@ namespace aspect
                              std::vector<double> &velocity_x,
                              std::vector<double> &velocity_y,
                              std::vector<double> &velocity_z,
+                             std::vector<double> &bedrock_transport_coefficient_array,
                              const double &fastscape_timestep_in_years,
                              const bool init) const;
 
@@ -138,6 +139,7 @@ namespace aspect
                                std::vector<double> &velocity_x,
                                std::vector<double> &velocity_y,
                                std::vector<double> &velocity_z,
+                               std::vector<double> &bedrock_transport_coefficient_array,
                                const double &fastscape_timestep_in_years,
                                const unsigned int &fastscape_iterations) const;
 
