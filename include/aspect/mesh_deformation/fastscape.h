@@ -48,6 +48,11 @@ namespace aspect
          */
         virtual void initialize () override;
 
+         /**
+         * Update input variables for FastScape.
+         */
+        void update(); 
+
         /**
          * Destructor for FastScape.
          */
@@ -441,20 +446,25 @@ namespace aspect
         double sediment_deposition_g;
 
         /**
-         * Bedrock river incision rate for the stream power law.
+         * Bedrock river incision rate (kf) for the stream power law.
          * (meters^(1-2m)/yr, $kf$ variable in FastScape surface equation.)
+         * Declare a parsed function for spatially variable kf
          */
-        mutable double bedrock_river_incision_rate;
-        // Declare a parsed function for spatially variable kf
-        mutable Functions::ParsedFunction<2> kf_distribution_function;
-        // Flag for using parsed function vs constant
+        Functions::ParsedFunction<2> kf_distribution_function;
+        
+        /**
+         * Flag to choose if a function of river incision rate for the stream power law will be applied.
+         */
         bool use_kf_distribution_function;
-        // The constant fallback value
+
+        /**
+         * Current Bedrock river incision rate for the stream power law.
+         */
         double constant_bedrock_river_incision_rate;
 
         /**
          * Sediment river incision rate for the stream power law (meters^(1-2m)/yr).
-         * When set to -1 this is identical to the bedrock value.
+         * When set to -1 this is identical to the bedrock value. 
          * ($kf$ variable in FastScape surface equation applied to sediment.)
          */
         double sediment_river_incision_rate;

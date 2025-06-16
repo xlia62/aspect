@@ -773,29 +773,23 @@ namespace aspect
       bool fastscape_mesh_filled = true;
       const unsigned int fastscape_array_size = fastscape_nx*fastscape_ny;
     
-      kf_distribution_function.set_time(this->get_time() / year_in_seconds); 
+      //kf_distribution_function.set_time(this->get_time() / year_in_seconds); 
       for (unsigned int i = 0; i < fastscape_array_size; ++i)
       {
-        // --- NEW: compute kf either from function or constant ---
-        if (use_kf_distribution_function)
-          {
-            // map flat index -> (ix, iy)
-            const unsigned int ix = i % fastscape_nx;
-            const unsigned int iy = i / fastscape_nx;
+        // map flat index -> (ix, iy)
+        const unsigned int ix = i % fastscape_nx;
+        const unsigned int iy = i / fastscape_nx;
 
-            // physical coords of cell center (or node) in Cartesian 2D
-            const double x = grid_extent[0].first + (ix - use_ghost_nodes) * fastscape_dx;
-            const double y = grid_extent[1].first + (iy - use_ghost_nodes) * fastscape_dy;
+        // physical coords of cell center (or node) in Cartesian 2D
+        const double x = grid_extent[0].first + (ix - use_ghost_nodes) * fastscape_dx;
+        const double y = grid_extent[1].first + (iy - use_ghost_nodes) * fastscape_dy;
 
-            bedrock_river_incision_rate_array[i]
-              = kf_distribution_function.value(Point<2>(x, y));
-          }
-        else
-          {
-            bedrock_river_incision_rate_array[i]
-              = constant_bedrock_river_incision_rate;
-          }
-        // ---------------------------------------------------------
+        // compute kf either from function or constant
+        bedrock_river_incision_rate_array[i]= (use_kf_distribution_function)
+        ?
+        kf_distribution_function.value(Point<2>(x, y))
+        :
+        constant_bedrock_river_incision_rate;
 
         bedrock_transport_coefficient_array[i] = bedrock_transport_coefficient;
 
@@ -1099,7 +1093,7 @@ namespace aspect
                       // and apply the flat_erosional_factor.
                       else
                         {
-                          bedrock_river_incision_rate_array[fastscape_nx*i+j] = bedrock_river_incision_rate*flat_erosional_factor;
+                          bedrock_river_incision_rate_array[fastscape_nx*i+j] = bedrock_river_incision_rate_array[fastscape_nx*i+j]*flat_erosional_factor;
                           bedrock_transport_coefficient_array[fastscape_nx*i+j] = bedrock_transport_coefficient*flat_erosional_factor;
                         }
                     }
@@ -1604,6 +1598,15 @@ namespace aspect
       return true;
     }
 
+    template <int dim>
+    void
+    FastScape<dim>::update()
+    {
+      if (use_kf_distribution_function)
+        {
+          kf_distribution_function.set_time(this->get_time() / year_in_seconds); 
+        }
+    }
 
 
     template <int dim>
@@ -1918,7 +1921,6 @@ namespace aspect
             drainage_area_exponent_m = prm.get_double("Drainage area exponent");
             slope_exponent_n = prm.get_double("Slope exponent");
             sediment_river_incision_rate = prm.get_double("Sediment river incision rate");
-            //bedrock_river_incision_rate = prm.get_double("Bedrock river incision rate");
             use_kf_distribution_function = prm.get_bool("Use kf distribution function");
             if (use_kf_distribution_function)
             {
@@ -1946,7 +1948,7 @@ namespace aspect
 
             if (!this->convert_output_to_years())
               {
-                bedrock_river_incision_rate *= year_in_seconds;
+                constant_bedrock_river_incision_rate *= year_in_seconds;
                 bedrock_transport_coefficient *= year_in_seconds;
                 sediment_river_incision_rate *= year_in_seconds;
                 bedrock_transport_coefficient *= year_in_seconds;
