@@ -370,7 +370,7 @@ namespace aspect
           std::vector<double> basement(fastscape_array_size);
           std::vector<double> silt_fraction(fastscape_array_size);
           std::vector<double> elevation_old(fastscape_array_size);
-
+          
           fill_fastscape_arrays(elevation,
                                 bedrock_transport_coefficient_array,
                                 bedrock_river_incision_rate_array,
@@ -776,32 +776,44 @@ namespace aspect
       // and surface_refinement_difference
       bool fastscape_mesh_filled = true;
       const unsigned int fastscape_array_size = fastscape_nx*fastscape_ny;
-    
-      // read the distribution of K and fill it to the fastscape array
-      kd_distribution_function.set_time(this->get_time() / year_in_seconds); 
+      
+      // update time-dependent parsed functions
       for (unsigned int i=0; i<fastscape_array_size; ++i)
         {
           bedrock_river_incision_rate_array[i] = bedrock_river_incision_rate;
           //compute kd either from function or constant
-          if (use_kd_distribution_function)
-            {
-              // map flat index -> (ix, iy)
-              const unsigned int ix = i % fastscape_nx;
-              const unsigned int iy = i / fastscape_nx;
+          const unsigned int ix = i % fastscape_nx;
+          const unsigned int iy = i / fastscape_nx;
 
-              // physical coords of cell center (or node) in Cartesian 2D
-              const double x = grid_extent[0].first + (ix - use_ghost_nodes) * fastscape_dx;
-              const double y = grid_extent[1].first + (iy - use_ghost_nodes) * fastscape_dy;
+          // Physical coordinates of the cell center in Cartesian 2D
+          const double x = grid_extent[0].first + (ix - use_ghost_nodes) * fastscape_dx;
+          const double y = grid_extent[1].first + (iy - use_ghost_nodes) * fastscape_dy;
+
+          bedrock_transport_coefficient_array[i] =
+            (use_kd_distribution_function
+            ? kd_distribution_function.value(Point<2>(x, y))
+            : constant_bedrock_transport_coefficient);
+
+
+          // if (use_kd_distribution_function)
+          //   { 
+          //     // map flat index -> (ix, iy)
+          //     const unsigned int ix = i % fastscape_nx;
+          //     const unsigned int iy = i / fastscape_nx;
+
+          //     // physical coords of cell center (or node) in Cartesian 2D
+          //     const double x = grid_extent[0].first + (ix - use_ghost_nodes) * fastscape_dx;
+          //     const double y = grid_extent[1].first + (iy - use_ghost_nodes) * fastscape_dy;
           
-              bedrock_transport_coefficient_array[i]
-                 = kd_distribution_function.value(Point<2>(x, y));
+          //     bedrock_transport_coefficient_array[i]
+          //        = kd_distribution_function.value(Point<2>(x, y));
 
-            }
-          else
-            {
-              bedrock_transport_coefficient_array[i]
-                = constant_bedrock_transport_coefficient;
-            }
+          //   }
+          // else
+          //   {
+          //     bedrock_transport_coefficient_array[i]
+          //       = constant_bedrock_transport_coefficient;
+          //   }
 
           // If this is a boundary node that is a ghost node then ignore that it
           // has not filled yet as the ghost nodes haven't been set.
@@ -1106,7 +1118,7 @@ namespace aspect
                       else
                         {
                           bedrock_river_incision_rate_array[fastscape_nx*i+j] = bedrock_river_incision_rate*flat_erosional_factor;
-                          bedrock_transport_coefficient_array[fastscape_nx*i+j] = bedrock_transport_coefficient*flat_erosional_factor;
+                          bedrock_transport_coefficient_array[fastscape_nx*i+j] = bedrock_transport_coefficient_array[fastscape_nx*i+j]*flat_erosional_factor;
                         }
                     }
                 }
@@ -1601,6 +1613,16 @@ namespace aspect
         out_silt_fraction << buffer_silt_fraction.str();
     }
 
+    template <int dim>
+    void
+    FastScape<dim>::update()
+    {
+      if (use_kd_distribution_function)
+        {
+          // read and update the distribution of Kd 
+          kd_distribution_function.set_time(this->get_time() / year_in_seconds); 
+        }
+    }
 
 
     template <int dim>
@@ -1941,12 +1963,12 @@ namespace aspect
               // simply never use constant_bedrock_transport_coefficient.
               // But of course we may have bugs, and so make sure that
               // the variable is unusable:
-              bedrock_transport_coefficient = numbers::signaling_nan<double>();
+              // bedrock_transport_coefficient = numbers::signaling_nan<double>();
             } 
             else
             {
               constant_bedrock_transport_coefficient = prm.get_double("Bedrock diffusivity");
-              bedrock_transport_coefficient = constant_bedrock_transport_coefficient;
+              // bedrock_transport_coefficient = constant_bedrock_transport_coefficient;
             }
             bedrock_deposition_g = prm.get_double("Bedrock deposition coefficient");
             sediment_deposition_g = prm.get_double("Sediment deposition coefficient");
@@ -1961,9 +1983,9 @@ namespace aspect
             if (!this->convert_output_to_years())
               {
                 bedrock_river_incision_rate *= year_in_seconds;
-                bedrock_transport_coefficient *= year_in_seconds;
+                sediment_transport_coefficient *= year_in_seconds;
                 sediment_river_incision_rate *= year_in_seconds;
-                bedrock_transport_coefficient *= year_in_seconds; 
+                constant_bedrock_transport_coefficient *= year_in_seconds; 
               }
 
             // Wind direction

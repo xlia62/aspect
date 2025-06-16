@@ -81,6 +81,11 @@ namespace aspect
          */
         void parse_parameters (ParameterHandler &prm) override;
 
+        /**
+         * Update time-dependent input parmetersfor the FastScape plugin.
+         */
+        void update();
+
       private:
         /**
          * Function used to set the FastScape ghost nodes. FastScape boundaries are
@@ -456,14 +461,9 @@ namespace aspect
         double sediment_river_incision_rate;
 
         /**
-         * Bedrock transport coefficient for hillslope diffusion (m^2/yr, kd in FastScape surface equation.)
-         */
-        mutable double bedrock_transport_coefficient;
-
-        /**
          * Declare a parsed function for spatially variable kd 
          */
-        mutable Functions::ParsedFunction<2> kd_distribution_function;
+        Functions::ParsedFunction<2> kd_distribution_function;
 
         /**
          * Flag for using parsed function vs constant
@@ -471,7 +471,7 @@ namespace aspect
         bool use_kd_distribution_function;
 
         /**
-         * The constant bedrock transport coefficient value
+         * The constant bedrock transport coefficient valuefor hillslope diffusion (m^2/yr, kd in FastScape surface equation.)
          */
         double constant_bedrock_transport_coefficient;
 
