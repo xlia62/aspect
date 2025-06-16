@@ -789,31 +789,11 @@ namespace aspect
           const double x = grid_extent[0].first + (ix - use_ghost_nodes) * fastscape_dx;
           const double y = grid_extent[1].first + (iy - use_ghost_nodes) * fastscape_dy;
 
+          // Update Bedrock transort coefficient
           bedrock_transport_coefficient_array[i] =
             (use_kd_distribution_function
             ? kd_distribution_function.value(Point<2>(x, y))
             : constant_bedrock_transport_coefficient);
-
-
-          // if (use_kd_distribution_function)
-          //   { 
-          //     // map flat index -> (ix, iy)
-          //     const unsigned int ix = i % fastscape_nx;
-          //     const unsigned int iy = i / fastscape_nx;
-
-          //     // physical coords of cell center (or node) in Cartesian 2D
-          //     const double x = grid_extent[0].first + (ix - use_ghost_nodes) * fastscape_dx;
-          //     const double y = grid_extent[1].first + (iy - use_ghost_nodes) * fastscape_dy;
-          
-          //     bedrock_transport_coefficient_array[i]
-          //        = kd_distribution_function.value(Point<2>(x, y));
-
-          //   }
-          // else
-          //   {
-          //     bedrock_transport_coefficient_array[i]
-          //       = constant_bedrock_transport_coefficient;
-          //   }
 
           // If this is a boundary node that is a ghost node then ignore that it
           // has not filled yet as the ghost nodes haven't been set.
