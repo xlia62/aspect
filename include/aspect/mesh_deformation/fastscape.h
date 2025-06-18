@@ -26,6 +26,7 @@
 #ifdef ASPECT_WITH_FASTSCAPE
 
 #include <aspect/mesh_deformation/interface.h>
+#include <deal.II/base/parsed_function.h>
 
 namespace aspect
 {
